@@ -104,7 +104,7 @@ def getBestMove(board):
 
     for move in board.legal_moves:
         board.push(move)
-        x = alpha_beta(board, False, alpha, beta, 3)
+        x = alpha_beta(board, False, alpha, beta, 4)
         board.pop()
         if beta <= alpha:
             bestVal = x
