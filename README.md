@@ -10,4 +10,4 @@ pip install python-chess
 ```
 
 Then afterwards run main.py. You will always play white and the bot will always play black.
-The bot takes around 1 minute to think. You can tune this parameter within the code but the bot will not play as well
+The bot takes around 1 minute to think. You can tune this parameter within the code
