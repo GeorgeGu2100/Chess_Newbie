@@ -104,7 +104,7 @@ def getBestMove(board):
 
     for move in board.legal_moves:
         board.push(move)
-        x = alpha_beta(board, False, alpha, beta, 4)
+        x = alpha_beta(board, False, alpha, beta, 3)
         board.pop()
         if beta <= alpha:
             bestVal = x
@@ -118,17 +118,17 @@ def getBestMove(board):
 
 pieceVals = {
     "P": -100,
-    "N": -320,
-    "B": -330,
-    "R": -500,
-    "Q": -900,
-    "K": -20000,
+    "N": -280,
+    "B": -320,
+    "R": -479,
+    "Q": -929,
+    "K": -60000,
     "p": 100,
-    "n": 320,
-    "b": 330,
-    "r": 500,
-    "q": 900,
-    "k": 20000
+    "n": 280,
+    "b": 320,
+    "r": 479,
+    "q": 929,
+    "k": 60000
 }
 
 whiteKing = readPstTxt("./PieceSquareTables/King_mid.txt")
