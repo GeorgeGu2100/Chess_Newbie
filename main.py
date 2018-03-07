@@ -1,5 +1,6 @@
 import chess
 import sys
+from zobrist import ZobristHash
 
 def reversal(actList):
     replList = [[0 for x in range(8)] for y in range(8)]
@@ -160,6 +161,8 @@ whitePawn = readPstTxt("./PieceSquareTables/Pawn.txt")
 blackPawn = reversal(whitePawn)
 whitePawn = flatten(whitePawn)
 blackPawn = flatten(blackPawn)
+
+
 
 board = chess.Board()
 
