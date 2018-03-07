@@ -125,6 +125,8 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
         return bestVal
 
 def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
+
+    clearZobristHash(oldNew, zobristHashTable, count): 
     bestVal = -sys.maxint
     bestMove = None
 
