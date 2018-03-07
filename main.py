@@ -41,6 +41,12 @@ def eval(board):
             total = total + getPieceVal(board, i)
         return total
 
+def clearZobristHash(oldNew, zobristHashTable, count):
+    if len(zobristHashTable) >= 20000:
+        zobristHashTable = {}
+        oldNew = {}
+        count = 0
+
 def getPieceVal(board, i):
     if board.piece_at(i) == None:
         return 0
@@ -71,16 +77,29 @@ def getPieceVal(board, i):
     elif piece == "q":
         return pieceVals[piece] + blackQueen[i]
 
-def alpha_beta(board, isMaximizing, alpha, beta, depth):
+def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobristHashTable, count):
     if depth == 0 or board.legal_moves.count() == 0:
         return eval(board)
 
     if isMaximizing:
         bestVal = -sys.maxint
         for move in board.legal_moves:
+            hash = zobrist.recomputeHash(board, move)
+
+            if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == False:
+                zobrist.recomputeHash(board, move)
+                bestVal = max(bestVal, zobristHashTable[hash][0])
+                continue
+
             board.push(move)
-            bestVal = max(bestVal, alpha_beta(board, not isMaximizing, alpha, beta, depth - 1))
+
+            x = alpha_beta(board, False, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
+            bestVal = max(x, bestVal)
+            zobristHashTable[hash] = [x, depth, False]
+            oldNew[count] = hash
+            count += 1
             board.pop()
+            zobrist.recomputeHash(board, move)
             alpha = max(alpha, bestVal)
             if beta <= alpha:
                 break
@@ -88,33 +107,62 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth):
     else:
         bestVal = sys.maxint
         for move in board.legal_moves:
+            hash = zobrist.recomputeHash(board, move)
+
+            if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == True:
+                zobrist.recomputeHash(board, move)
+                bestVal = min(bestVal, zobristHashTable[hash][0])
+                continue
+
             board.push(move)
-            bestVal = min(bestVal, alpha_beta(board, not isMaximizing, alpha, beta, depth - 1))
+            x = alpha_beta(board, True, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
+            bestVal = min(x, bestVal)
+            zobristHashTable[hash] = [x, depth, True]
+            oldNew[count] = hash
+            count += 1
             board.pop()
+            zobrist.recomputeHash(board, move)
             beta = min(beta, bestVal)
             if beta <= alpha:
                 break
         return bestVal
 
-def getBestMove(board):
+def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
     bestVal = -sys.maxint
     bestMove = None
 
     alpha = -sys.maxint
     beta = sys.maxint
 
+    moves = []
+
     for move in board.legal_moves:
+        # clearZobristHash(oldNew, zobristHashTable, count)
+        hash = zobrist.recomputeHash(board, move)
+
+        if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == False:
+            zobrist.recomputeHash(board, move)
+            if bestVal < zobristHashTable[hash][0]:
+                bestVal = zobristHashTable[hash][0]
+                bestMove = move
+                continue
+
         board.push(move)
-        x = alpha_beta(board, False, alpha, beta, 3)
+        x = alpha_beta(board, False, alpha, beta, depth - 1, zobrist, oldNew, zobristHashTable, count)
         board.pop()
+        zobrist.recomputeHash(board, move)
+        zobristHashTable[hash] = [x, depth, False]
+        oldNew[count] = hash
+        count += 1
+
         if beta <= alpha:
+            moves.append([bestVal, move])
             bestVal = x
             bestMove = move
             break
         if bestVal < x:
             bestVal = x
             bestMove = move
-
     return bestMove
 
 pieceVals = {
@@ -162,9 +210,12 @@ blackPawn = reversal(whitePawn)
 whitePawn = flatten(whitePawn)
 blackPawn = flatten(blackPawn)
 
-
-
+depth = 4
+zobrist = ZobristHash()
 board = chess.Board()
+oldNew = {0: zobrist.hashBoard(board)}
+zobristHashTable = {zobrist.hashBoard(board): [0, depth, True]}
+count = 1
 
 while 1:
     if board.is_checkmate():
@@ -185,5 +236,6 @@ while 1:
             print "Invalid move try again"
             continue
     else:
-        move = getBestMove(board)
+        move = getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth)
+        zobrist.recomputeHash(board, move)
         board.push(move)

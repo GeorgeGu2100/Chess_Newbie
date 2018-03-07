@@ -10,4 +10,9 @@ pip install python-chess
 ```
 
 Then afterwards run main.py. You will always play white and the bot will always play black.
-The bot takes around 1 minute to think. You can tune this parameter within the code
+
+## Thanks
+Sunfish, python-chess
+
+##Todo
+Implement Zobrist Hashing

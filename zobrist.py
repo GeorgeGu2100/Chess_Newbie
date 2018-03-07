@@ -36,14 +36,8 @@ class ZobristHash(object):
     def recomputeHash(self, board, move):
         if board.piece_at(move.to_square) != None:
             self.hash ^= self.l[move.to_square][board.piece_at(move.to_square).symbol()]
-
         piece = board.piece_at(move.from_square).symbol()
 
         self.hash ^= self.l[move.to_square][piece]
         self.hash ^= self.l[move.from_square][piece]
         return self.hash
-
-board = chess.Board()
-z = ZobristHash()
-
-move = chess.Move.from_uci("g1f3")
