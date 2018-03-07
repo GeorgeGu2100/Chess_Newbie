@@ -17,7 +17,7 @@ def readPstTxt(filename):
         for line in f:
             arr = line.split(",")
             for i in range(len(arr)):
-                arr[i] = int(arr[i])
+                arr[i] = -int(arr[i])
             pst.insert(0, arr)
     return pst
 
@@ -91,7 +91,6 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
                 bestVal = max(bestVal, zobristHashTable[hash][0])
             else:    
                 board.push(move)
-
                 x = alpha_beta(board, False, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
                 bestVal = max(x, bestVal)
                 zobristHashTable[hash] = [x, depth, False]
@@ -135,7 +134,6 @@ def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
     moves = []
 
     for move in board.legal_moves:
-        clearZobristHash(oldNew, zobristHashTable, count)
         hash = zobrist.recomputeHash(board, move)
 
         if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == False:
