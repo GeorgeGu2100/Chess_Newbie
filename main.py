@@ -89,7 +89,7 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
             if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == False:
                 zobrist.recomputeHash(board, move)
                 bestVal = max(bestVal, zobristHashTable[hash][0])
-            else:    
+            else:
                 board.push(move)
                 x = alpha_beta(board, False, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
                 bestVal = max(x, bestVal)
@@ -98,9 +98,9 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
                 count += 1
                 board.pop()
                 zobrist.recomputeHash(board, move)
-                alpha = max(alpha, bestVal)
-                if beta <= alpha:
-                    break
+            alpha = max(alpha, bestVal)
+            if beta <= alpha:
+                break
         return bestVal
     else:
         bestVal = sys.maxint
@@ -110,7 +110,7 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
             if hash in zobristHashTable and zobristHashTable[hash][1] >= depth and zobristHashTable[hash][2] == True:
                 zobrist.recomputeHash(board, move)
                 bestVal = min(bestVal, zobristHashTable[hash][0])
-            else:    
+            else:
                 board.push(move)
                 x = alpha_beta(board, True, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
                 bestVal = min(x, bestVal)
@@ -119,21 +119,19 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
                 count += 1
                 board.pop()
                 zobrist.recomputeHash(board, move)
-                beta = min(beta, bestVal)
-                if beta <= alpha:
-                    break
+            beta = min(beta, bestVal)
+            if beta <= alpha:
+                break
         return bestVal
 
 def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
 
-    clearZobristHash(oldNew, zobristHashTable, count) 
+    clearZobristHash(oldNew, zobristHashTable, count)
     bestVal = -sys.maxint
     bestMove = None
 
     alpha = -sys.maxint
     beta = sys.maxint
-
-    moves = []
 
     for move in board.legal_moves:
         hash = zobrist.recomputeHash(board, move)
@@ -143,18 +141,17 @@ def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
             if bestVal < zobristHashTable[hash][0]:
                 bestVal = zobristHashTable[hash][0]
                 bestMove = move
-                continue
 
-        board.push(move)
-        x = alpha_beta(board, False, alpha, beta, depth - 1, zobrist, oldNew, zobristHashTable, count)
-        board.pop()
-        zobrist.recomputeHash(board, move)
-        zobristHashTable[hash] = [x, depth, False]
-        oldNew[count] = hash
-        count += 1
-
+        else:
+            board.push(move)
+            x = alpha_beta(board, False, alpha, beta, depth - 1, zobrist, oldNew, zobristHashTable, count)
+            board.pop()
+            zobrist.recomputeHash(board, move)
+            zobristHashTable[hash] = [x, depth, False]
+            oldNew[count] = hash
+            count += 1
+        alpha = max(alpha, bestVal)
         if beta <= alpha:
-            moves.append([bestVal, move])
             bestVal = x
             bestMove = move
             break
