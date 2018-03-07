@@ -13,6 +13,3 @@ Then afterwards run main.py. You will always play white and the bot will always 
 
 ## Thanks
 Sunfish, python-chess
-
-##Todo
-Implement Zobrist Hashing
