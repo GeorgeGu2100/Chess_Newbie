@@ -93,7 +93,7 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
                 board.push(move)
                 x = alpha_beta(board, False, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
                 bestVal = max(x, bestVal)
-                zobristHashTable[hash] = [x, depth, False]
+                zobristHashTable[hash] = [x, depth - 1, False]
                 oldNew[count] = hash
                 count += 1
                 board.pop()
@@ -114,7 +114,7 @@ def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobrist
                 board.push(move)
                 x = alpha_beta(board, True, alpha, beta, depth-1, zobrist, oldNew, zobristHashTable, count)
                 bestVal = min(x, bestVal)
-                zobristHashTable[hash] = [x, depth, True]
+                zobristHashTable[hash] = [x, depth - 1, True]
                 oldNew[count] = hash
                 count += 1
                 board.pop()
@@ -147,7 +147,7 @@ def getBestMove(board, zobrist, oldNew, zobristHashTable, count, depth):
             x = alpha_beta(board, False, alpha, beta, depth - 1, zobrist, oldNew, zobristHashTable, count)
             board.pop()
             zobrist.recomputeHash(board, move)
-            zobristHashTable[hash] = [x, depth, False]
+            zobristHashTable[hash] = [x, depth - 1, False]
             oldNew[count] = hash
             count += 1
         alpha = max(alpha, bestVal)
