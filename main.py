@@ -42,7 +42,7 @@ def eval(board):
         return total
 
 def clearZobristHash(oldNew, zobristHashTable, count):
-    if len(zobristHashTable) >= 20000:
+    if len(zobristHashTable) >= 500000:
         zobristHashTable = {}
         oldNew = {}
         count = 0
@@ -80,6 +80,9 @@ def getPieceVal(board, i):
 def alpha_beta(board, isMaximizing, alpha, beta, depth, zobrist, oldNew, zobristHashTable, count):
     if depth == 0 or board.legal_moves.count() == 0:
         return eval(board)
+
+    if zobrist.hash in zobristHashTable and zobristHashTable[zobrist.hash][1] >= depth and zobristHashTable[zobrist.hash][2] is not board.turn:
+        return zobristHashTable[zobrist.hash][0]
 
     if isMaximizing:
         bestVal = -sys.maxint
